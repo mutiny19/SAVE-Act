@@ -303,18 +303,36 @@ h1 {
   .control-group { flex-wrap: wrap; }
   .ctrl-btn { padding: 8px 10px; font-size: 11px; min-height: 36px; }
 
-  /* Table rows simplified */
-  .table-header-tab1, .state-row-tab1,
-  .table-header-tab2, .state-row-tab2,
-  .table-header-tab3, .state-row-tab3 {
-    grid-template-columns: 40px 1fr 56px;
+  /* Tab1: Show State(1), Name(2), Score(7) — hide everything else */
+  .table-header-tab1, .state-row-tab1 {
+    grid-template-columns: 40px 1fr 50px;
   }
-  .table-header-tab1 > div:nth-child(n+3):not(:last-child),
-  .state-row-tab1 > div:nth-child(n+3):not(:last-child),
-  .table-header-tab2 > div:nth-child(n+3):not(:last-child),
-  .state-row-tab2 > div:nth-child(n+3):not(:last-child),
-  .table-header-tab3 > div:nth-child(n+3):not(:last-child),
-  .state-row-tab3 > div:nth-child(n+3):not(:last-child) { display: none; }
+  .table-header-tab1 > div:nth-child(3),
+  .table-header-tab1 > div:nth-child(8),
+  .state-row-tab1 > div:nth-child(3),
+  .state-row-tab1 > div:nth-child(8) { display: none !important; }
+  /* Bring back score (child 7) which was hidden at 800px */
+  .table-header-tab1 > div:nth-child(7),
+  .state-row-tab1 > div:nth-child(7) { display: block !important; }
+
+  /* Tab2: Show State(1), Name(2), Score(6) — hide everything else */
+  .table-header-tab2, .state-row-tab2 {
+    grid-template-columns: 40px 1fr 50px;
+  }
+  .table-header-tab2 > div:nth-child(3),
+  .state-row-tab2 > div:nth-child(3) { display: none !important; }
+  /* Bring back score (child 6) — wasn't hidden at 800px, but ensure visible */
+  .table-header-tab2 > div:nth-child(6),
+  .state-row-tab2 > div:nth-child(6) { display: block !important; }
+
+  /* Tab3: Show State(1), Name(2) — hide everything else */
+  .table-header-tab3, .state-row-tab3 {
+    grid-template-columns: 40px 1fr;
+  }
+  .table-header-tab3 > div:nth-child(3),
+  .table-header-tab3 > div:nth-child(5),
+  .state-row-tab3 > div:nth-child(3),
+  .state-row-tab3 > div:nth-child(5) { display: none !important; }
 
   .state-row { padding: 12px 10px; min-height: 48px; }
   .state-abbr { font-size: 15px; }
@@ -336,8 +354,9 @@ h1 {
   .callout-title { font-size: 14px; }
   .callout-text { font-size: 13px; }
 
-  /* Stats row */
+  /* Stats row - show only first 3 on mobile */
   .stat-card { padding: 12px; }
+  .stat-card:nth-child(n+4) { display: none; }
   .stat-value { font-size: 22px; }
   .stat-title { font-size: 10px; }
 
@@ -505,7 +524,7 @@ function buildDetailHTMLTab1(s) {
           ${s.ol ? "Online registration can be started but requires in-person follow-up with documents to finalize. " : ""}
           ${s.ar ? "Automatic registration systems would need restructuring. " : ""}
           ${s.sd ? "Same-day registration would require in-person document presentation. " : ""}
-          Any change to registration (address, name, party) would trigger full re-verification with citizenship documents.
+          Any change to registration (address, name, or other details) would trigger full re-verification with citizenship documents.
         </div>
       </div>
       <div class="detail-actions">
@@ -642,7 +661,7 @@ function render() {
       <button class="tab-btn ${currentTab==="electionday"?"active":""}" data-tab="electionday">Election Day (All Voters)</button>
     </div>
     <div class="tab-subtitle">
-      ${currentTab === "newreg" ? "Who: People registering for the first time, or making any change (name, address, party)" : ""}
+      ${currentTab === "newreg" ? "Who: People registering for the first time, or updating their registration (name, address, etc.)" : ""}
       ${currentTab === "existing" ? "Who: People already registered who don't move or change their name" : ""}
       ${currentTab === "electionday" ? "Who: Everyone who votes, regardless of registration status" : ""}
     </div>
