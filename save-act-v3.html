@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAVE America Act: State-by-State Impact Assessment</title>
+<meta name="description" content="Interactive, nonpartisan analysis of how the SAVE America Act (H.R. 22) would change voter registration requirements in each U.S. state.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0a16; color: #e8e9ed; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1000px; margin: 0 auto; padding: 24px 20px; }
+
+/* BANNER */
+.banner {
+  background: #2a2400; border: 1px solid #5d4a00; border-radius: 8px;
+  padding: 16px; margin-bottom: 20px;
+}
+.banner-text { font-size: 13px; color: #f5d76e; line-height: 1.6; margin-bottom: 8px; }
+.banner-link { color: #f5d76e; text-decoration: none; font-weight: 600; }
+.banner-link:hover { text-decoration: underline; }
+.banner-cta {
+  display: inline-block; margin-top: 8px; padding: 7px 14px;
+  background: #f5d76e; color: #2a2400; font-size: 12px; font-weight: 700;
+  border-radius: 5px; text-decoration: none; transition: background 0.2s;
+}
+.banner-cta:hover { background: #fff7a8; }
+
+.eyebrow { font-size: 11px; letter-spacing: 2px; color: #4a9d8f; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+h1 {
+  font-size: 32px; font-weight: 800; margin-bottom: 8px; line-height: 1.2;
+  background: linear-gradient(135deg, #e8e9ed 0%, #8a8fa8 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle { font-size: 15px; color: #6b6f85; line-height: 1.6; margin-bottom: 4px; }
+.status { font-size: 12px; color: #4a4e64; margin-bottom: 20px; }
+
+/* Cards */
+.card { background: #12121f; border: 1px solid #1e1e35; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+.card-label { font-size: 13px; font-weight: 700; color: #4a9d8f; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Name Change Impact Section */
+.name-change-card {
+  background: linear-gradient(135deg, #1a2e2a 0%, #12121f 100%);
+  border: 1px solid #2d6a4f; border-radius: 10px;
+  padding: 20px; margin-bottom: 20px;
+}
+.name-change-title { font-size: 16px; font-weight: 800; color: #4a9d8f; margin-bottom: 12px; }
+.name-change-text { font-size: 14px; color: #b0b3c2; line-height: 1.8; margin-bottom: 10px; }
+.name-change-text strong { color: #e8e9ed; }
+.name-change-text em { color: #8a8fa8; font-style: italic; }
+
+/* Requirements sections */
+.req-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.req-section-title { font-size: 12px; font-weight: 700; color: #8a8fa8; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
+.req-list { list-style: none; }
+.req-list li { font-size: 14px; color: #b0b3c2; line-height: 1.8; margin-bottom: 8px; padding-left: 16px; position: relative; }
+.req-list li:before { content: "→"; position: absolute; left: 0; color: #4a9d8f; }
+
+/* Stats */
+.stats-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.stat-card {
+  background: #12121f; border: 1px solid #1e1e35; border-radius: 8px;
+  padding: 14px 16px; flex: 1; min-width: 140;
+}
+.stat-title { font-size: 11px; color: #6b6f85; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.stat-value { font-size: 26px; font-weight: 700; color: #e8e9ed; font-variant-numeric: tabular-nums; }
+.stat-sub { font-size: 12px; color: #6b6f85; margin-top: 4px; }
+
+/* Document access section */
+.doc-access { background: #12121f; border: 1px solid #1e1e35; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+.doc-access-title { font-size: 13px; font-weight: 700; color: #4a9d8f; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.doc-stat { font-size: 14px; color: #b0b3c2; line-height: 1.8; margin-bottom: 8px; }
+.doc-stat strong { color: #e8e9ed; font-weight: 600; }
+.doc-note { font-size: 12px; color: #6b6f85; margin-top: 12px; font-style: italic; }
+
+/* Controls */
+.controls { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.control-group { display: flex; align-items: center; gap: 6px; }
+.control-label { font-size: 12px; color: #6b6f85; font-weight: 600; }
+.ctrl-btn {
+  padding: 6px 12px; border-radius: 5px; border: 1px solid #1e1e35;
+  background: transparent; color: #6b6f85; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.ctrl-btn:hover { border-color: #2e2e45; color: #8a8fa8; }
+.ctrl-btn.active { border-color: #4a9d8f; background: #1a2e2a; color: #4a9d8f; }
+
+/* TABS */
+.tabs-container { margin-bottom: 20px; }
+.tabs-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.tab-btn {
+  padding: 10px 16px; border-radius: 6px; border: 1px solid #1e1e35;
+  background: transparent; color: #6b6f85; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.tab-btn:hover { border-color: #2e2e45; color: #8a8fa8; }
+.tab-btn.active { border-color: #4a9d8f; background: #1a2e2a; color: #4a9d8f; }
+.tab-subtitle { font-size: 11px; color: #6b6f85; margin-top: -8px; margin-bottom: 12px; font-weight: 500; }
+
+/* Legend */
+.legend { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.legend-label { font-size: 11px; color: #6b6f85; font-weight: 600; }
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
+.legend-text { font-size: 11px; color: #8a8fa8; }
+
+/* Table */
+.table-wrap { background: #12121f; border: 1px solid #1e1e35; border-radius: 10px; overflow: hidden; }
+.table-header {
+  display: grid;
+  padding: 10px 14px; border-bottom: 1px solid #1e1e35;
+  font-size: 10px; font-weight: 700; color: #4a4e64; text-transform: uppercase; letter-spacing: 1px;
+  align-items: center;
+}
+.table-header-tab1 {
+  grid-template-columns: 56px 1fr 140px 80px 80px 80px 80px 56px;
+}
+.table-header-tab2 {
+  grid-template-columns: 56px 1fr 140px 120px 120px 56px;
+}
+.table-header-tab3 {
+  grid-template-columns: 56px 1fr 100px 140px 56px;
+}
+.table-header > div:nth-child(n+5) { text-align: center; }
+
+.state-row {
+  display: grid;
+  padding: 10px 14px; border-bottom: 1px solid #13132a;
+  align-items: center; cursor: pointer; transition: background 0.15s;
+}
+.state-row-tab1 {
+  grid-template-columns: 56px 1fr 140px 80px 80px 80px 80px 56px;
+}
+.state-row-tab2 {
+  grid-template-columns: 56px 1fr 140px 120px 120px 56px;
+}
+.state-row-tab3 {
+  grid-template-columns: 56px 1fr 100px 140px 56px;
+}
+.state-row:hover { background: #15152a; }
+.state-row.selected { background: #1a1a2e; }
+.state-row:last-child, .state-row.has-detail { border-bottom: none; }
+
+.state-abbr { font-weight: 800; font-size: 14px; }
+.state-name { font-size: 13px; color: #b0b3c2; font-weight: 500; }
+.state-id-type { font-size: 11px; color: #4a4e64; }
+
+.passport-bar-wrap { display: flex; align-items: center; gap: 6px; width: 100%; }
+.passport-bar-bg { flex: 1; height: 8px; background: #1a1a2e; border-radius: 4px; overflow: hidden; }
+.passport-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+.passport-pct { font-size: 12px; color: #8a8fa8; min-width: 36px; text-align: right; font-variant-numeric: tabular-nums; }
+
+.change-bar-wrap { display: flex; align-items: center; gap: 6px; }
+.change-bar { height: 6px; border-radius: 3px; min-width: 4px; transition: width 0.4s ease; }
+.change-label { font-size: 11px; color: #6b6f85; }
+
+.tag {
+  display: inline-block; padding: 2px 7px; border-radius: 4px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.3px; white-space: nowrap;
+}
+.tag-yes { background: #1a2e2a; color: #4a9d8f; }
+.tag-no { background: #1a1a2e; color: #4a4e64; }
+.tag-poc { background: rgba(45,106,79,0.2); color: #2d6a4f; }
+.tag-edl { background: rgba(74,157,143,0.15); color: #4a9d8f; }
+
+.score-cell { text-align: center; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* Inline detail panel */
+.detail-panel {
+  padding: 0 14px;
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  border-bottom: 1px solid #13132a;
+  background: #10101e;
+}
+.detail-panel.open {
+  max-height: 1200px;
+  padding: 16px 14px 20px;
+}
+.detail-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.detail-section-title {
+  font-weight: 700; color: #8a8fa8; margin-bottom: 12px;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px;
+}
+.detail-line { font-size: 14px; color: #b0b3c2; line-height: 1.9; margin-bottom: 8px; }
+.detail-line strong { color: #e8e9ed; font-weight: 600; }
+
+/* Action section within detail panel */
+.detail-actions {
+  grid-column: 1 / -1;
+  border-top: 1px solid #1e1e35;
+  padding-top: 16px;
+  margin-top: 8px;
+}
+.detail-actions-title { font-weight: 700; color: #8a8fa8; margin-bottom: 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
+.action-list { list-style: none; }
+.action-list li { font-size: 14px; color: #b0b3c2; line-height: 1.8; margin-bottom: 10px; padding-left: 16px; position: relative; }
+.action-list li:before { content: "✓"; position: absolute; left: 0; color: #4a9d8f; font-weight: 700; }
+.action-link { color: #4a9d8f; text-decoration: none; font-weight: 600; }
+.action-link:hover { text-decoration: underline; }
+
+/* Methodology */
+.meth-btn {
+  background: none; border: 1px solid #1e1e35; border-radius: 6px;
+  color: #6b6f85; font-size: 12px; padding: 7px 14px; cursor: pointer;
+  font-weight: 600; font-family: inherit; margin-top: 20px;
+}
+.meth-btn:hover { border-color: #2e2e45; color: #8a8fa8; }
+.methodology {
+  max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+}
+.methodology.open { max-height: 1200px; }
+.methodology-inner {
+  background: #12121f; border: 1px solid #1e1e35; border-radius: 10px;
+  padding: 20px; margin-top: 10px; font-size: 14px; color: #8a8fa8; line-height: 1.7;
+}
+.meth-heading { font-weight: 700; color: #b0b3c2; margin-bottom: 8px; }
+.meth-p { margin-bottom: 8px; }
+.meth-source { margin-bottom: 4px; }
+.meth-note { margin-top: 8px; font-style: italic; color: #4a4e64; }
+
+/* Key Data Points */
+.keydata { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+.keydata-label-pro { font-size: 11px; font-weight: 700; color: #4a9d8f; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.keydata-label-con { font-size: 11px; font-weight: 700; color: #c97136; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.keydata-list { font-size: 13px; color: #8a8fa8; line-height: 1.8; }
+.keydata-list li { margin-bottom: 8px; margin-left: 16px; }
+
+/* Urgency callout */
+.callout {
+  background: linear-gradient(135deg, #1a2e2a 0%, #12121f 100%);
+  border: 1px solid #2d6a4f; border-radius: 10px;
+  padding: 20px; margin-bottom: 20px;
+}
+.callout-title { font-size: 15px; font-weight: 800; color: #4a9d8f; margin-bottom: 8px; }
+.callout-text { font-size: 14px; color: #b0b3c2; line-height: 1.7; }
+.callout-text strong { color: #e8e9ed; }
+.callout-cta { display: inline-block; margin-top: 12px; padding: 8px 16px; background: #4a9d8f; color: #0a0a16; font-size: 13px; font-weight: 700; border-radius: 6px; text-decoration: none; transition: background 0.2s; }
+.callout-cta:hover { background: #5db8a8; }
+
+.footer { font-size: 11px; color: #2a2a3e; text-align: center; margin-top: 16px; padding: 8px 0; }
+
+/* Responsive */
+@media (max-width: 800px) {
+  .table-header-tab1, .state-row-tab1 {
+    grid-template-columns: 44px 1fr 100px 56px;
+  }
+  .table-header-tab1 > div:nth-child(4),
+  .table-header-tab1 > div:nth-child(5),
+  .table-header-tab1 > div:nth-child(6),
+  .table-header-tab1 > div:nth-child(7),
+  .state-row-tab1 > div:nth-child(4),
+  .state-row-tab1 > div:nth-child(5),
+  .state-row-tab1 > div:nth-child(6),
+  .state-row-tab1 > div:nth-child(7) { display: none; }
+  .table-header-tab1 > div:nth-child(8),
+  .state-row-tab1 > div:nth-child(8) { display: none; }
+
+  .table-header-tab2, .state-row-tab2 {
+    grid-template-columns: 44px 1fr 100px 56px;
+  }
+  .table-header-tab2 > div:nth-child(4),
+  .table-header-tab2 > div:nth-child(5),
+  .state-row-tab2 > div:nth-child(4),
+  .state-row-tab2 > div:nth-child(5) { display: none; }
+
+  .table-header-tab3, .state-row-tab3 {
+    grid-template-columns: 44px 1fr 100px 56px;
+  }
+  .table-header-tab3 > div:nth-child(4),
+  .state-row-tab3 > div:nth-child(4) { display: none; }
+
+  .detail-inner { grid-template-columns: 1fr; }
+  .keydata { grid-template-columns: 1fr; }
+  .req-sections { grid-template-columns: 1fr; }
+  .stats-row { flex-direction: column; }
+  h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="app"></div>
+
+<script>
+const STATE_DATA = [
+  {"st":"AL","n":"Alabama","v":"Photo ID requested","ol":1,"ar":0,"sd":0,"pp":25.3,"pc":1,"ed":0,"rg":"South","rl":"https://www.alabamainteractive.org/sos/voter_registration/voterRegistrationWelcome.action"},
+  {"st":"AK","n":"Alaska","v":"Non-photo ID requested","ol":1,"ar":1,"sd":1,"pp":56,"pc":0,"ed":0,"rg":"West","rl":"https://voterregistration.alaska.gov/"},
+  {"st":"AZ","n":"Arizona","v":"Non-photo ID required","ol":1,"ar":0,"sd":0,"pp":43,"pc":1,"ed":0,"rg":"West","rl":"https://azsos.gov/elections/voting-election/register-vote-or-update-your-current-voter-information"},
+  {"st":"AR","n":"Arkansas","v":"Photo ID required","ol":0,"ar":0,"sd":0,"pp":26.5,"pc":0,"ed":0,"rg":"South","rl":"https://www.sos.arkansas.gov/elections/voter-information/voter-registration-information"},
+  {"st":"CA","n":"California","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":62.7,"pc":0,"ed":0,"rg":"West","rl":"https://registertovote.ca.gov/"},
+  {"st":"CO","n":"Colorado","v":"Non-photo ID requested","ol":1,"ar":1,"sd":1,"pp":55,"pc":0,"ed":0,"rg":"West","rl":"https://www.sos.state.co.us/voter/pages/pub/olvr/verifyNewVoter.xhtml"},
+  {"st":"CT","n":"Connecticut","v":"Non-photo ID requested","ol":1,"ar":1,"sd":1,"pp":59.6,"pc":0,"ed":0,"rg":"NE","rl":"https://voterregistration.ct.gov/OLVR/welcome.do"},
+  {"st":"DE","n":"Delaware","v":"Non-photo ID requested","ol":1,"ar":1,"sd":1,"pp":52,"pc":0,"ed":0,"rg":"NE","rl":"https://ivote.de.gov/voterlogin.aspx"},
+  {"st":"FL","n":"Florida","v":"Photo ID requested","ol":1,"ar":0,"sd":0,"pp":47,"pc":0,"ed":0,"rg":"South","rl":"https://registertovoteflorida.gov/home"},
+  {"st":"GA","n":"Georgia","v":"Photo ID required","ol":1,"ar":1,"sd":0,"pp":38,"pc":1,"ed":0,"rg":"South","rl":"https://registertovote.sos.ga.gov/GAOLVR/welcometoga.do"},
+  {"st":"HI","n":"Hawaii","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":57,"pc":0,"ed":0,"rg":"West","rl":"https://olvr.hawaii.gov/"},
+  {"st":"ID","n":"Idaho","v":"Photo ID requested","ol":1,"ar":0,"sd":1,"pp":42,"pc":0,"ed":0,"rg":"West","rl":"https://elections.sos.idaho.gov/ElectionLink/ElectionLink/ApplicationInstructions.aspx"},
+  {"st":"IL","n":"Illinois","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":48,"pc":0,"ed":0,"rg":"MW","rl":"https://ova.elections.il.gov/"},
+  {"st":"IN","n":"Indiana","v":"Photo ID required","ol":1,"ar":0,"sd":0,"pp":33.5,"pc":0,"ed":0,"rg":"MW","rl":"https://indianavoters.in.gov/"},
+  {"st":"IA","n":"Iowa","v":"Non-photo ID requested","ol":1,"ar":0,"sd":1,"pp":38,"pc":0,"ed":0,"rg":"MW","rl":"https://sos.iowa.gov/elections/voterinformation/voterregistration.html"},
+  {"st":"KS","n":"Kansas","v":"Photo ID required","ol":1,"ar":0,"sd":0,"pp":37,"pc":1,"ed":0,"rg":"MW","rl":"https://www.kdor.ks.gov/Apps/VoterReg/Default.aspx"},
+  {"st":"KY","n":"Kentucky","v":"Non-photo ID requested","ol":1,"ar":0,"sd":0,"pp":28,"pc":0,"ed":0,"rg":"South","rl":"https://vrsws.sos.ky.gov/ovrweb/"},
+  {"st":"LA","n":"Louisiana","v":"Photo ID requested","ol":1,"ar":0,"sd":0,"pp":29.1,"pc":1,"ed":0,"rg":"South","rl":"https://voterportal.sos.la.gov/VoterRegistration"},
+  {"st":"ME","n":"Maine","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":50,"pc":0,"ed":0,"rg":"NE","rl":"https://www.maine.gov/sos/cec/elec/voter-info/voterguide.html"},
+  {"st":"MD","n":"Maryland","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":56,"pc":0,"ed":0,"rg":"NE","rl":"https://voterservices.elections.maryland.gov/OnlineVoterRegistration/InstructionsStep1"},
+  {"st":"MA","n":"Massachusetts","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":64.3,"pc":0,"ed":0,"rg":"NE","rl":"https://www.sec.state.ma.us/ovr/"},
+  {"st":"MI","n":"Michigan","v":"Photo ID requested","ol":1,"ar":1,"sd":1,"pp":40,"pc":0,"ed":1,"rg":"MW","rl":"https://mvic.sos.state.mi.us/registervoter"},
+  {"st":"MN","n":"Minnesota","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":48,"pc":0,"ed":1,"rg":"MW","rl":"https://www.sos.state.mn.us/elections-voting/register-to-vote/"},
+  {"st":"MS","n":"Mississippi","v":"Photo ID required","ol":0,"ar":0,"sd":0,"pp":20.6,"pc":0,"ed":0,"rg":"South","rl":"https://www.sos.ms.gov/elections-voting/voter-registration-information"},
+  {"st":"MO","n":"Missouri","v":"Photo ID requested","ol":1,"ar":0,"sd":0,"pp":36,"pc":0,"ed":0,"rg":"MW","rl":"https://www.sos.mo.gov/elections/goVoteMissouri/register"},
+  {"st":"MT","n":"Montana","v":"Photo ID requested","ol":0,"ar":0,"sd":1,"pp":44,"pc":0,"ed":0,"rg":"West","rl":"https://sosmt.gov/elections/vote/"},
+  {"st":"NE","n":"Nebraska","v":"Photo ID requested","ol":1,"ar":0,"sd":0,"pp":38,"pc":0,"ed":0,"rg":"MW","rl":"https://www.nebraska.gov/apps-sos-voter-registration/"},
+  {"st":"NV","n":"Nevada","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":40,"pc":0,"ed":0,"rg":"West","rl":"https://www.registertovotenv.gov/"},
+  {"st":"NH","n":"New Hampshire","v":"Non-photo ID requested","ol":0,"ar":0,"sd":1,"pp":53,"pc":1,"ed":0,"rg":"NE","rl":"https://app.sos.nh.gov/voterinformation"},
+  {"st":"NJ","n":"New Jersey","v":"No ID required","ol":1,"ar":1,"sd":0,"pp":68.1,"pc":0,"ed":0,"rg":"NE","rl":"https://voter.svrs.nj.gov/register"},
+  {"st":"NM","n":"New Mexico","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":35,"pc":0,"ed":0,"rg":"West","rl":"https://portal.sos.state.nm.us/OVR/WebPages/InstructionsStep1.aspx"},
+  {"st":"NY","n":"New York","v":"No ID required","ol":1,"ar":1,"sd":0,"pp":64.6,"pc":0,"ed":1,"rg":"NE","rl":"https://voterreg.dmv.ny.gov/MotorVoter/"},
+  {"st":"NC","n":"North Carolina","v":"Photo ID required","ol":1,"ar":0,"sd":1,"pp":39,"pc":0,"ed":0,"rg":"South","rl":"https://www.ncsbe.gov/registering/how-register"},
+  {"st":"ND","n":"North Dakota","v":"Non-photo ID required","ol":1,"ar":0,"sd":0,"pp":42,"pc":0,"ed":0,"rg":"MW","rl":"https://vip.sos.nd.gov/PortalListDetails.aspx?ptlhPKID=79&ptlPKID=7"},
+  {"st":"OH","n":"Ohio","v":"Photo ID required","ol":1,"ar":0,"sd":0,"pp":36,"pc":1,"ed":0,"rg":"MW","rl":"https://olvr.ohiosos.gov/"},
+  {"st":"OK","n":"Oklahoma","v":"Non-photo ID requested","ol":1,"ar":0,"sd":0,"pp":31.8,"pc":0,"ed":0,"rg":"South","rl":"https://oklahoma.gov/elections/voter-registration/register-to-vote.html"},
+  {"st":"OR","n":"Oregon","v":"No ID required","ol":1,"ar":1,"sd":0,"pp":52,"pc":0,"ed":0,"rg":"West","rl":"https://sos.oregon.gov/voting/pages/registration.aspx"},
+  {"st":"PA","n":"Pennsylvania","v":"No ID required","ol":1,"ar":1,"sd":0,"pp":46,"pc":0,"ed":0,"rg":"NE","rl":"https://www.vote.pa.gov/Register-to-Vote/Pages/default.aspx"},
+  {"st":"RI","n":"Rhode Island","v":"Photo ID requested","ol":1,"ar":1,"sd":0,"pp":49,"pc":0,"ed":0,"rg":"NE","rl":"https://vote.sos.ri.gov/"},
+  {"st":"SC","n":"South Carolina","v":"Photo ID requested","ol":1,"ar":0,"sd":0,"pp":33,"pc":0,"ed":0,"rg":"South","rl":"https://info.scvotes.sc.gov/eng/ovr/start.aspx"},
+  {"st":"SD","n":"South Dakota","v":"Photo ID requested","ol":1,"ar":0,"sd":1,"pp":37,"pc":0,"ed":0,"rg":"MW","rl":"https://sdsos.gov/elections-voting/voting/register-to-vote/default.aspx"},
+  {"st":"TN","n":"Tennessee","v":"Photo ID required","ol":1,"ar":0,"sd":0,"pp":31.4,"pc":0,"ed":0,"rg":"South","rl":"https://ovr.govote.tn.gov/"},
+  {"st":"TX","n":"Texas","v":"Photo ID requested","ol":0,"ar":0,"sd":0,"pp":39,"pc":0,"ed":0,"rg":"South","rl":"https://www.sos.texas.gov/elections/voter/reqvr.shtml"},
+  {"st":"UT","n":"Utah","v":"Non-photo ID requested","ol":1,"ar":0,"sd":1,"pp":46,"pc":0,"ed":0,"rg":"West","rl":"https://secure.utah.gov/voterreg/index.html"},
+  {"st":"VT","n":"Vermont","v":"No ID required","ol":1,"ar":1,"sd":1,"pp":55,"pc":0,"ed":1,"rg":"NE","rl":"https://olvr.vermont.gov/"},
+  {"st":"VA","n":"Virginia","v":"Non-photo ID requested","ol":1,"ar":0,"sd":0,"pp":52,"pc":0,"ed":0,"rg":"South","rl":"https://vote.elections.virginia.gov/VoterInformation"},
+  {"st":"WA","n":"Washington","v":"Non-photo ID requested","ol":1,"ar":1,"sd":1,"pp":54,"pc":0,"ed":1,"rg":"West","rl":"https://voter.votewa.gov/WhereToVote.aspx"},
+  {"st":"WV","n":"West Virginia","v":"Non-photo ID requested","ol":1,"ar":0,"sd":0,"pp":20.8,"pc":0,"ed":0,"rg":"South","rl":"https://ovr.sos.wv.gov/Register/Landing"},
+  {"st":"WI","n":"Wisconsin","v":"Photo ID required","ol":1,"ar":0,"sd":1,"pp":44,"pc":0,"ed":0,"rg":"MW","rl":"https://myvote.wi.gov/en-us/Register-To-Vote"},
+  {"st":"WY","n":"Wyoming","v":"Non-photo ID required","ol":0,"ar":0,"sd":0,"pp":40,"pc":1,"ed":0,"rg":"West","rl":"https://sos.wyo.gov/Elections/RegisteringToVote.aspx"}
+];
+
+function calcChangeScore(s) {
+  let score = 0;
+  if (s.v === "No ID required") score += 3;
+  else if (s.v.includes("requested")) score += 2;
+  else if (s.v.includes("required")) score += 1;
+  if (s.ol) score += 2;
+  if (s.ar) score += 2;
+  if (s.pc) score -= 3;
+  if (s.ed) score -= 1;
+  if (s.pp < 30) score += 2;
+  else if (s.pp < 40) score += 1;
+  return Math.max(0, Math.min(10, score));
+}
+
+STATE_DATA.forEach(s => { s.sc = calcChangeScore(s); });
+
+function changeColor(sc) {
+  if (sc <= 2) return "#2d6a4f";
+  if (sc <= 4) return "#74a67a";
+  if (sc <= 6) return "#d4a843";
+  if (sc <= 8) return "#c97136";
+  return "#a4303f";
+}
+
+function changeLabel(sc) {
+  if (sc <= 2) return "Minimal";
+  if (sc <= 4) return "Low";
+  if (sc <= 6) return "Moderate";
+  if (sc <= 8) return "Significant";
+  return "Major";
+}
+
+function passportColor(p) {
+  if (p > 50) return "#4a9d8f";
+  if (p > 35) return "#d4a843";
+  return "#a4303f";
+}
+
+function tag(text, type) {
+  const cls = type === "yes" ? "tag-yes" : type === "poc" ? "tag-poc" : type === "edl" ? "tag-edl" : "tag-no";
+  return `<span class="tag ${cls}">${text}</span>`;
+}
+
+// State
+let currentTab = "newreg";
+let currentSort = "name";
+let currentRegion = "All";
+let selectedState = null;
+let showMeth = false;
+
+function getFiltered() {
+  let d = [...STATE_DATA];
+  if (currentRegion !== "All") d = d.filter(s => s.rg === currentRegion);
+  if (currentSort === "change") d.sort((a, b) => b.sc - a.sc);
+  else if (currentSort === "passport") d.sort((a, b) => a.pp - b.pp);
+  else if (currentSort === "name") d.sort((a, b) => a.n.localeCompare(b.n));
+  return d;
+}
+
+function getStats(filtered) {
+  const f = filtered;
+  return {
+    total: f.length,
+    noID: f.filter(s => s.v === "No ID required").length,
+    hasOnline: f.filter(s => s.ol).length,
+    hasAuto: f.filter(s => s.ar).length,
+    hasPOC: f.filter(s => s.pc).length,
+    hasEDL: f.filter(s => s.ed).length,
+    avgPassport: Math.round(f.reduce((a, s) => a + s.pp, 0) / f.length),
+  };
+}
+
+function buildDetailHTMLTab1(s) {
+  let html = `
+    <div class="detail-inner">
+      <div>
+        <div class="detail-section-title">Current System</div>
+        <div class="detail-line">Election-Day ID: <strong>${s.v}</strong></div>
+        <div class="detail-line">Online Registration: <strong style="color:${s.ol?"#4a9d8f":"#a4303f"}">${s.ol?"Yes":"No"}</strong></div>
+        <div class="detail-line">Automatic Registration: <strong style="color:${s.ar?"#4a9d8f":"#6b6f85"}">${s.ar?"Yes":"No"}</strong></div>
+        <div class="detail-line">Same-Day Registration: <strong style="color:${s.sd?"#4a9d8f":"#6b6f85"}">${s.sd?"Yes":"No"}</strong></div>
+        <div class="detail-line">Passport Ownership: <strong>${s.pp}%</strong></div>
+      </div>
+      <div>
+        <div class="detail-section-title">What Would Change for New Registrants</div>
+        <div class="detail-line">
+          Would require <strong>documentary proof of citizenship presented in person</strong>.
+          ${s.ol ? "Online registration can be started but requires in-person follow-up with documents to finalize. " : ""}
+          ${s.ar ? "Automatic registration systems would need restructuring. " : ""}
+          ${s.sd ? "Same-day registration would require in-person document presentation. " : ""}
+          Any change to registration (address, name, party) would trigger full re-verification with citizenship documents.
+        </div>
+      </div>
+      <div class="detail-actions">
+        <div class="detail-actions-title">What You Can Do Now</div>
+        <ul class="action-list">
+          <li><strong><a href="${s.rl}" class="action-link" target="_blank">Register or confirm your registration in ${s.n}</a></strong> — Under current rules, not future ones</li>
+          <li><strong>Check your registration status</strong> on <a href="https://www.vote.org/am-i-registered-to-vote/" class="action-link" target="_blank">vote.org</a> — Confirm your name and address are current</li>
+          <li>Locate your <strong>birth certificate</strong> — Order a certified copy from vital records if needed ($10–30)</li>
+          <li>Consider obtaining a <strong>passport card ($30)</strong> or <strong>passport book ($130)</strong> as backup citizenship documentation</li>
+          <li>If your name differs from your birth certificate, keep <strong>marriage certificate or court order</strong> accessible</li>
+          ${s.ed ? `<li>Your state offers <strong>Enhanced Driver's Licenses</strong> — upgrading would satisfy the citizenship proof requirement on its own</li>` : ""}
+        </ul>
+      </div>
+    </div>
+  `;
+  return html;
+}
+
+function buildDetailHTMLTab2(s) {
+  let html = `
+    <div class="detail-inner">
+      <div>
+        <div class="detail-section-title">Your Current Status</div>
+        <div class="detail-line">Election-Day ID requirement: <strong>${s.v}</strong></div>
+        <div class="detail-line">Proof-of-Citizenship law exists: <strong style="color:${s.pc?"#4a9d8f":"#6b6f85"}">${s.pc?"Yes":"No"}</strong></div>
+        ${s.ed ? `<div class="detail-line">Enhanced Driver's License available: <strong style="color:#4a9d8f">Yes</strong></div>` : ""}
+      </div>
+      <div>
+        <div class="detail-section-title">Under the SAVE America Act</div>
+        <div class="detail-line"><strong style="color:#4a9d8f">Good news:</strong> If you're already registered and do NOT change your name or address, the proof-of-citizenship requirement would NOT apply retroactively.</div>
+        <div class="detail-line" style="margin-top:10px"><strong style="color:#d4a843">Important caveat:</strong> Voter rolls would be subject to mandatory DHS database cross-checks. If flagged, you would need to re-verify your eligibility — this affects a small percentage of registrations.</div>
+        <div class="detail-line" style="margin-top:10px"><strong style="color:#d4a843">On Election Day:</strong> Federal photo ID requirement would apply to everyone at the polls, potentially narrower than your state's current law.</div>
+      </div>
+      <div class="detail-actions">
+        <div class="detail-actions-title">What You Can Do Now</div>
+        <ul class="action-list">
+          <li><strong><a href="https://www.vote.org/am-i-registered-to-vote/" class="action-link" target="_blank">Verify your registration</a></strong> — Confirm your name and address are current and match your ID</li>
+          <li><strong>Keep your registration current</strong> — No updates needed unless you move or change your name</li>
+          <li>Have a valid photo ID ready for Election Day — passport, REAL ID, military ID, or state-issued photo ID</li>
+        </ul>
+      </div>
+    </div>
+  `;
+  return html;
+}
+
+function buildDetailHTMLTab3(s) {
+  let html = `
+    <div class="detail-inner">
+      <div>
+        <div class="detail-section-title">Current Election-Day ID</div>
+        <div class="detail-line"><strong>${s.v}</strong></div>
+      </div>
+      <div>
+        <div class="detail-section-title">What Would Change</div>
+        <div class="detail-line">
+          ${s.v === "No ID required" ? `${s.n} currently requires no ID at the polls. The SAVE America Act would mandate a federal photo ID for all voters — a significant change from current practice.` : ""}
+          ${s.v.includes("Non-photo") && s.v.includes("requested") ? `${s.n} currently requests non-photo ID (utility bill, bank statement) but allows voting without it. The SAVE America Act would mandate a specific federal photo ID — eliminating non-photo alternatives.` : ""}
+          ${s.v.includes("Non-photo") && s.v.includes("required") ? `${s.n} currently requires non-photo ID. The SAVE America Act would mandate a federal photo ID — eliminating non-photo options like utility bills.` : ""}
+          ${s.v.includes("Photo ID") && s.v.includes("requested") ? `${s.n} currently requests photo ID but allows alternatives (affidavit, provisional). The SAVE America Act would narrow acceptable forms — student IDs, most tribal IDs, and some state IDs would no longer qualify.` : ""}
+          ${s.v.includes("Photo ID") && s.v.includes("required") ? `${s.n} already requires photo ID at the polls. The SAVE America Act's federal requirement would still narrow acceptable forms — student IDs, most tribal IDs, and some currently accepted state IDs would no longer qualify.` : ""}
+        </div>
+        <div class="detail-line" style="margin-top:10px"><strong>Acceptable under SAVE America Act:</strong> U.S. passport, REAL ID, state-issued photo ID, military ID, or tribal ID issued by Bureau of Indian Affairs${s.ed ? `. Enhanced Driver's Licenses issued in ${s.n} would qualify.` : "."}</div>
+      </div>
+      <div class="detail-actions">
+        <div class="detail-actions-title">Prepare for Election Day</div>
+        <ul class="action-list">
+          <li>Verify you have a valid form of photo ID — passport, REAL ID, military ID, or state-issued photo ID</li>
+          <li>If using a state-issued ID, confirm it will be accepted under stricter federal requirements</li>
+          <li>Have backup ID ready if uncertain — passport card ($30) is widely accepted</li>
+        </ul>
+      </div>
+    </div>
+  `;
+  return html;
+}
+
+function render() {
+  const filtered = getFiltered();
+  const stats = getStats(filtered);
+  const app = document.getElementById("app");
+
+  let html = `
+    <div class="banner">
+      <div class="banner-text">
+        <strong>This bill has NOT become law.</strong> It passed the U.S. House on Feb 11, 2026 (218–213) and awaits Senate action. 50 Republican senators support it, but 60 votes are needed to overcome a filibuster. Senate leadership has not scheduled a vote. If enacted, all provisions would take effect immediately — no transition period.
+      </div>
+      <a href="https://www.usa.gov/elected-officials" target="_blank" class="banner-cta">Contact Your Legislators</a>
+    </div>
+
+    <div class="eyebrow">Policy Analysis</div>
+    <h1>The SAVE America Act: State-by-State Impact Assessment</h1>
+    <p class="subtitle">How the Safeguard American Voter Eligibility Act, now called the SAVE America Act (H.R. 22), would change voter registration requirements in each state — comparing current systems against proposed federal mandates.</p>
+    <p class="status">Status: Passed U.S. House Feb 11, 2026 (218–213) · 50 Senate supporters, 60 needed · No Senate vote scheduled · Not yet law</p>
+
+    <div class="callout">
+      <div class="callout-title">Key distinction across all three tabs</div>
+      <div class="callout-text">The SAVE America Act's proof-of-citizenship mandate applies to <strong>new registrations and registration changes</strong> — not retroactively to existing registrations. Citizens who are already registered and do not change their name or address would not need to provide documentary proof of citizenship under this bill. <strong>Regardless of your position on the legislation, confirming your registration is current ensures you know your status.</strong></div>
+      <a href="https://www.vote.org/am-i-registered-to-vote/" target="_blank" class="callout-cta">Check Your Registration Status</a>
+    </div>
+
+    <div class="name-change-card">
+      <div class="name-change-title">Name Changes & the SAVE America Act</div>
+      <div class="name-change-text">Under the SAVE America Act, <strong>ANY change to voter registration — including a name change — would trigger full re-verification with documentary proof of citizenship presented in person.</strong></div>
+      <div class="name-change-text"><strong>Who this affects:</strong> Approximately <strong>69 million married women</strong> have birth certificates that do not match their current legal name — <em>Brennan Center for Justice</em>. This also applies to men who changed their name at marriage (including same-sex couples), anyone who changed their name through divorce, court order, gender transition, or for any other reason. All would need to present <strong>BOTH their birth certificate AND a marriage certificate or court order</strong> showing the name change.</div>
+      <div class="name-change-text"><strong>No exemption exists.</strong> The bill does not provide an exemption for name-only changes to existing registrations.</div>
+      <div class="name-change-text"><em>Key takeaway:</em> If you anticipate a name change, confirming your registration under current rules beforehand means the new requirements would not apply until you update your registration.</div>
+    </div>
+  `;
+
+  // Controls
+  const sorts = [{k:"change",l:"Change Level"},{k:"passport",l:"Passport Rate"},{k:"name",l:"A–Z"}];
+  const regionMap = [
+    {k:"All",l:"All"},{k:"South",l:"South"},{k:"MW",l:"Midwest"},{k:"NE",l:"Northeast"},{k:"West",l:"West"}
+  ];
+
+  html += `<div class="controls">
+    <div class="control-group">
+      <span class="control-label">SORT</span>
+      ${sorts.map(s => `<button class="ctrl-btn ${currentSort===s.k?"active":""}" data-sort="${s.k}">${s.l}</button>`).join("")}
+    </div>
+    <div class="control-group">
+      <span class="control-label">REGION</span>
+      ${regionMap.map(r => `<button class="ctrl-btn ${currentRegion===r.k?"active":""}" data-region="${r.k}">${r.l}</button>`).join("")}
+    </div>
+  </div>`;
+
+  // TABS
+  html += `<div class="tabs-container">
+    <div class="tabs-row">
+      <button class="tab-btn ${currentTab==="newreg"?"active":""}" data-tab="newreg">New Registrations & Updates</button>
+      <button class="tab-btn ${currentTab==="existing"?"active":""}" data-tab="existing">Already Registered, No Changes</button>
+      <button class="tab-btn ${currentTab==="electionday"?"active":""}" data-tab="electionday">Election Day (All Voters)</button>
+    </div>
+    <div class="tab-subtitle">
+      ${currentTab === "newreg" ? "Who: People registering for the first time, or making any change (name, address, party)" : ""}
+      ${currentTab === "existing" ? "Who: People already registered who don't move or change their name" : ""}
+      ${currentTab === "electionday" ? "Who: Everyone who votes, regardless of registration status" : ""}
+    </div>
+  </div>`;
+
+  // Stats
+  html += `<div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-title">States Shown</div>
+      <div class="stat-value">${stats.total}</div>
+      <div class="stat-sub">${currentRegion !== "All" ? (currentRegion==="MW"?"Midwest":currentRegion==="NE"?"Northeast":currentRegion) + " region" : "All states"}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">No Current Voter ID</div>
+      <div class="stat-value">${stats.noID}</div>
+      <div class="stat-sub">Would require new federal doc requirements</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">Have Online Registration</div>
+      <div class="stat-value">${stats.hasOnline}</div>
+      <div class="stat-sub">Would require in-person follow-up</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">Have Auto Registration</div>
+      <div class="stat-value">${stats.hasAuto}</div>
+      <div class="stat-sub">Would need restructuring</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">Already Have POC Law</div>
+      <div class="stat-value">${stats.hasPOC}</div>
+      <div class="stat-sub">Minimal additional change</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">Have Enhanced DL</div>
+      <div class="stat-value">${stats.hasEDL}</div>
+      <div class="stat-sub">MI, MN, NY, VT, WA</div>
+    </div>
+  </div>`;
+
+  // Legend
+  html += `<div class="legend">
+    <span class="legend-label">CHANGE SCALE:</span>
+    ${[{l:"Minimal",c:"#2d6a4f"},{l:"Low",c:"#74a67a"},{l:"Moderate",c:"#d4a843"},{l:"Significant",c:"#c97136"},{l:"Major",c:"#a4303f"}]
+      .map(x => `<div class="legend-item"><div class="legend-swatch" style="background:${x.c}"></div><span class="legend-text">${x.l}</span></div>`).join("")}
+  </div>`;
+
+  // TABLE
+  html += `<div class="table-wrap">`;
+
+  if (currentTab === "newreg") {
+    html += `<div class="table-header table-header-tab1">
+      <div>State</div><div>Current Registration System</div><div>Passport Rate</div><div>Online Reg</div>
+      <div>Auto Reg</div><div>Same-Day</div><div>Change Score</div><div>POC/EDL</div>
+    </div>`;
+  } else if (currentTab === "existing") {
+    html += `<div class="table-header table-header-tab2">
+      <div>State</div><div>Current Election-Day ID</div><div>DHS Cross-Check Risk</div><div>POC Law</div><div>EDL</div><div>Score</div>
+    </div>`;
+  } else {
+    html += `<div class="table-header table-header-tab3">
+      <div>State</div><div>Current Election-Day ID</div><div>Passport Rate</div><div>What Changes at Polls</div><div>EDL</div>
+    </div>`;
+  }
+
+  filtered.forEach(s => {
+    const cc = changeColor(s.sc);
+    const cl = changeLabel(s.sc);
+    const pc = passportColor(s.pp);
+    const isSelected = selectedState === s.st;
+    let flagsHtml = "";
+    if (s.pc) flagsHtml += tag("POC", "poc");
+    if (s.ed) flagsHtml += " " + tag("EDL", "edl");
+
+    if (currentTab === "newreg") {
+      html += `<div class="state-row state-row-tab1 ${isSelected ? "selected has-detail" : ""}" data-state="${s.st}">
+        <div class="state-abbr" style="color:${cc}">${s.st}</div>
+        <div><div class="state-name">${s.n}</div><div class="state-id-type">${s.v}</div></div>
+        <div class="passport-bar-wrap">
+          <div class="passport-bar-bg"><div class="passport-bar-fill" style="width:${s.pp}%;background:${pc}"></div></div>
+          <span class="passport-pct">${s.pp}%</span>
+        </div>
+        <div style="text-align:center">${s.ol ? tag("Yes","yes") : tag("No","no")}</div>
+        <div style="text-align:center">${s.ar ? tag("Yes","yes") : tag("No","no")}</div>
+        <div style="text-align:center">${s.sd ? tag("Yes","yes") : tag("No","no")}</div>
+        <div class="score-cell" style="color:${cc}">${s.sc}</div>
+        <div style="text-align:center">${flagsHtml}</div>
+      </div>`;
+    } else if (currentTab === "existing") {
+      const riskLevel = s.pc ? "Low" : (s.pp > 50 ? "Low" : "Moderate");
+      const riskColor = s.pc ? "#4a9d8f" : (s.pp > 50 ? "#4a9d8f" : "#d4a843");
+      html += `<div class="state-row state-row-tab2 ${isSelected ? "selected has-detail" : ""}" data-state="${s.st}">
+        <div class="state-abbr" style="color:${riskColor}">${s.st}</div>
+        <div><div class="state-name">${s.n}</div><div class="state-id-type">${s.v}</div></div>
+        <div style="color:${riskColor}"><strong>${riskLevel}</strong></div>
+        <div style="text-align:center">${s.pc ? tag("Yes","yes") : tag("No","no")}</div>
+        <div style="text-align:center">${s.ed ? tag("Yes","yes") : tag("No","no")}</div>
+        <div class="score-cell" style="color:${cc}">${s.sc}</div>
+      </div>`;
+    } else {
+      html += `<div class="state-row state-row-tab3 ${isSelected ? "selected has-detail" : ""}" data-state="${s.st}">
+        <div class="state-abbr" style="color:${cc}">${s.st}</div>
+        <div><div class="state-name">${s.n}</div><div class="state-id-type">${s.v}</div></div>
+        <div class="passport-bar-wrap">
+          <div class="passport-bar-bg"><div class="passport-bar-fill" style="width:${s.pp}%;background:${pc}"></div></div>
+          <span class="passport-pct">${s.pp}%</span>
+        </div>
+        <div style="font-size:13px;color:#b0b3c2">${s.v.includes("No ID") ? "ID now required" : s.v.includes("Non-photo") ? "Narrower ID forms" : "Narrower ID forms"}</div>
+        <div style="text-align:center">${s.ed ? tag("EDL","edl") : ""}</div>
+      </div>`;
+    }
+
+    // Detail panel
+    let detailHTML = currentTab === "newreg" ? buildDetailHTMLTab1(s) : (currentTab === "existing" ? buildDetailHTMLTab2(s) : buildDetailHTMLTab3(s));
+    html += `<div class="detail-panel ${isSelected ? "open" : ""}" id="detail-${s.st}">
+      ${detailHTML}
+    </div>`;
+  });
+
+  html += `</div>`;
+
+  // Document access
+  html += `<div class="doc-access">
+    <div class="doc-access-title">Citizenship Documents & Access</div>
+    <div class="doc-stat"><strong>21.3 million</strong> voting-age citizens (9.1%) lack ready access to ANY citizenship document</div>
+    <div class="doc-stat"><strong>3.8 million</strong> lack these documents entirely</div>
+    <div class="doc-stat"><strong>52%</strong> of registered voters lack an unexpired passport with their current legal name</div>
+    <div class="doc-stat"><strong>11%</strong> cannot access their birth certificate</div>
+    <div class="doc-stat"><strong>69 million</strong> married women have birth certificates not matching current legal name</div>
+    <div class="doc-note">Note: "Lack of ready access" doesn't mean impossible — documents may be stored elsewhere, in a different state, or require time to obtain. This reflects the infrastructure burden, not impossibility of compliance.</div>
+    <div class="doc-access-title" style="margin-top:16px">What Qualifies Under SAVE America Act</div>
+    <div class="doc-stat">The bill accepts multiple forms: U.S. passport, birth certificate, naturalization certificate, military ID with service record, government photo ID showing birthplace, or REAL ID that indicates citizenship. Only 5 states currently offer Enhanced Driver's Licenses (MI, MN, NY, VT, WA) that satisfy this. Standard REAL IDs do NOT indicate citizenship — noncitizens with lawful status can obtain them. A standard driver's license + birth certificate together would work.</div>
+  </div>`;
+
+  // Methodology
+  html += `<button class="meth-btn" id="meth-toggle">${showMeth ? "Hide" : "Show"} Methodology &amp; Sources</button>
+  <div class="methodology ${showMeth ? "open" : ""}">
+    <div class="methodology-inner">
+      <div class="meth-heading">Change Score Methodology (0–10)</div>
+      <p class="meth-p">The change score estimates how much a state's current voter registration and ID systems would need to change if the SAVE America Act becomes law. It measures degree of systemic disruption, not whether that change is good or bad.</p>
+      <p class="meth-p"><strong style="color:#b0b3c2">Factors that increase the score:</strong> No current voter ID requirement (+3), non-strict ID (+2), strict ID but no POC law (+1), has online voter registration (+2), has automatic voter registration (+2), passport rate below 30% (+2) or below 40% (+1).</p>
+      <p class="meth-p"><strong style="color:#b0b3c2">Factors that decrease the score:</strong> Already has a proof-of-citizenship law (−3), offers Enhanced Driver's License (−1).</p>
+      <p class="meth-p"><strong style="color:#b0b3c2">What this does NOT capture:</strong> Demographic composition, estimated voter impact, birth certificate accessibility, state implementation capacity, political likelihood of compliance, or the distinction between new registrants and already-registered voters (covered in the detail panels and tabs).</p>
+      <div class="meth-heading" style="margin-top:12px">Sources</div>
+      <p class="meth-source">• Voter ID categories: NCSL Voter Identification Laws (April 2025), Ballotpedia (Oct 2025)</p>
+      <p class="meth-source">• Passport ownership: Rustic Pathways / Bureau of Consular Affairs (2015–2024 issuance data)</p>
+      <p class="meth-source">• Proof-of-citizenship laws: USBirthCertificates.com compilation (Feb 2026): AL, AZ, GA, KS, LA, NH, OH, WY</p>
+      <p class="meth-source">• Enhanced Driver's Licenses: TSA/DHS approved list; PolitiFact fact-check (Apr 2025); only MI, MN, NY, VT, WA currently issuing</p>
+      <p class="meth-source">• Online/automatic voter registration: Movement Advancement Project Democracy Maps (Feb 2026), Ballotpedia (Nov 2025)</p>
+      <p class="meth-source">• Document access: Brennan Center for Justice (2023), Bipartisan Policy Center, UMD CDCE data</p>
+      <p class="meth-source">• SAVE America Act provisions: Congress.gov H.R. 22 (119th Congress), Bipartisan Policy Center analysis, Brennan Center for Justice, NPR explainer (Feb 19, 2026), Votebeat analysis (Feb 16, 2026)</p>
+      <p class="meth-source">• REAL ID and citizenship verification: PolitiFact (Apr 2025), Center for American Progress, MOST Policy Initiative</p>
+      <p class="meth-note">This analysis presents factual, sourced data without advocacy for or against the legislation. Change scores reflect systemic disruption magnitude, not policy desirability. Analysis compiled Feb 23, 2026. Bill rebranded from "SAVE Act" to "SAVE America Act" in 2026 session.</p>
+    </div>
+  </div>`;
+
+  // Key Data Points
+  html += `<div class="card" style="margin-top:20px">
+    <div class="keydata">
+      <div>
+        <div class="keydata-label-pro">Key Data Points Cited by Proponents</div>
+        <ul class="keydata-list">
+          <li>83% of Americans support requiring photo ID to vote — <em>Pew Research Center, Aug 2025</em></li>
+          <li>No universal federal citizenship verification mechanism currently exists for voter registration — <em>H.R. 22 bill text, Congress.gov</em></li>
+          <li>Heritage Foundation's Election Fraud Database documents noncitizen voting convictions across multiple states — <em>Heritage Foundation</em></li>
+          <li>19 states and D.C. issue driver's licenses regardless of immigration status, creating ID gaps — <em>National Conference of State Legislatures</em></li>
+          <li>Bill includes an alternative evidence process and provisional ballot protections for applicants who cannot immediately produce documents — <em>H.R. 22, Sec. 4</em></li>
+          <li>Bill's sponsor Rep. Chip Roy has stated the goal is for states to add citizenship indicators to standard licenses over time — <em>House floor remarks, Feb 2026</em></li>
+          <li>Existing federal law (52 U.S.C. §20914) already requires citizenship to vote but lacks an enforcement mechanism — <em>National Voter Registration Act</em></li>
+        </ul>
+      </div>
+      <div>
+        <div class="keydata-label-con">Key Data Points Cited by Opponents</div>
+        <ul class="keydata-list">
+          <li>Heritage Foundation's own database: 77 noncitizen voting cases documented over 24 years (~3 per year nationwide) — <em>Heritage Election Fraud Database</em></li>
+          <li>Kansas proof-of-citizenship law blocked 31,000 eligible citizens (12% of applicants) while noncitizen rate was 0.002% — <em>Fish v. Kobach, 10th Circuit, 2018</em></li>
+          <li>Utah 2025–26 full review of 2M+ voter records: 1 noncitizen registration found, 0 noncitizen votes cast — <em>Utah Lt. Gov. Office, 2026</em></li>
+          <li>21.3M voting-age citizens lack ready access to citizenship documents; 3.8M lack them entirely — <em>Brennan Center for Justice / UMD CDCE, 2023</em></li>
+          <li>Alabama 2024 DHS-crosscheck voter purge: ~94% of those flagged were confirmed U.S. citizens — <em>Alabama Secretary of State settlement, 2024</em></li>
+          <li>North Carolina DMV analysis: ~98% of individuals flagged as potential noncitizens were U.S. citizens — <em>NC State Board of Elections audit</em></li>
+          <li>Bill provides no federal funding or transition period for state implementation — <em>H.R. 22 bill text, Congress.gov</em></li>
+        </ul>
+      </div>
+    </div>
+  </div>`;
+
+  html += `<div class="footer">Data compiled Feb 23, 2026 · Not affiliated with any political organization · For informational purposes only</div>`;
+
+  app.innerHTML = html;
+  attachEvents();
+}
+
+function attachEvents() {
+  // Tab buttons
+  document.querySelectorAll("[data-tab]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentTab = btn.dataset.tab;
+      selectedState = null;
+      render();
+    });
+  });
+
+  // Sort buttons
+  document.querySelectorAll("[data-sort]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentSort = btn.dataset.sort;
+      render();
+    });
+  });
+
+  // Region buttons
+  document.querySelectorAll("[data-region]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentRegion = btn.dataset.region;
+      selectedState = null;
+      render();
+    });
+  });
+
+  // State rows
+  document.querySelectorAll(".state-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const st = row.dataset.state;
+      if (selectedState === st) {
+        selectedState = null;
+      } else {
+        selectedState = st;
+      }
+      document.querySelectorAll(".detail-panel").forEach(p => p.classList.remove("open"));
+      document.querySelectorAll(".state-row").forEach(r => {
+        r.classList.remove("selected", "has-detail");
+      });
+      if (selectedState) {
+        const panel = document.getElementById("detail-" + selectedState);
+        if (panel) {
+          panel.classList.add("open");
+          row.classList.add("selected", "has-detail");
+          setTimeout(() => {
+            panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }, 50);
+        }
+      }
+    });
+  });
+
+  // Methodology toggle
+  const methBtn = document.getElementById("meth-toggle");
+  if (methBtn) {
+    methBtn.addEventListener("click", () => {
+      showMeth = !showMeth;
+      const methDiv = document.querySelector(".methodology");
+      methDiv.classList.toggle("open");
+      methBtn.textContent = showMeth ? "Hide Methodology & Sources" : "Show Methodology & Sources";
+    });
+  }
+}
+
+render();
+</script>
+</body>
+</html>
